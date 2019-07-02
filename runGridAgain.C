@@ -16,9 +16,11 @@
   gSystem->Load("libRAWDatarec");
   gSystem->Load("libHist");
   gSystem->Load("libRIO");
+  
   //gSystem->Load("libEveDet");
   //gSystem->Load("libCDB");
   //gSystem->Load("libESDfilter");
+
   gSystem->Load("libAOD");
   gSystem->Load("libESD");
   gSystem->Load("libANALYSIS");
@@ -104,8 +106,8 @@
 
       }else{
           chain=new TChain("esdTree");
-		//		chain->Add("/home/sekiguchi/work/local_alicework/alice_data/2017/LHC17f2b_fast/265309/001/AliESDs.root");//DPMJET
-		chain->Add("~/workalice/alice_data/2017/LHC17f2a_fast_fix/265309/001/AliESDs.root");//EPOS
+	  chain->Add("~/workalice/alice_data/2017/LHC17f2a_fast_fix/265309/002/AliESDs.root");//EPOS */
+	  //hain->Add("/alice/sim/2017/LHC17f2a_fast_fix/265309/002/AliESDs.root");//EPOS
 
 		
 		/*
@@ -113,7 +115,7 @@
 		chain->Add("/home/sekiguchi/work/local_alicework/MCESDanalysis/ali_data_PbPb/002/AliESDs.root");//AMPT of PbPb
 		*/
       }
-
+      
     }else{
       if(!iAODAnalysis){
         TChain *chain =new TChain("esdTree");
@@ -122,11 +124,11 @@
 	//	chain->Add("../../tmp/AliESDs.root");
 	//chain->Add("$HOME/alicework/alice_data/2013/LHC13c/000195529/ESDs/pass2/13000195529000.10/AliESDs.root");
 
-
-  chain->Add("$HOME/alicework/alice_data/2016/LHC16q/000265309/pass1_CENT_wSDD/16000265309019.100/AliESDs.root");
-}
-else{
-  TChain *chain =new TChain("aodTree");
+	
+	chain->Add("$HOME/alicework/alice_data/2016/LHC16q/000265309/pass1_CENT_wSDD/16000265309019.100/AliESDs.root");
+      }
+      else{
+	TChain *chain =new TChain("aodTree");
 	//chain->Add("../../alice_data/2013/LHC13c/000195529/ESDs/pass2/AOD/001/AliAOD.root");
 	//chain->Add("../../alice_data/2013/LHC13b/000195344/ESDs/pass3/AOD/001/AliAOD.root");
 	//		chain->Add("$HOME/alicework/alice_data/2016/LHC16q/000265309/pass1_CENT_wSDD/AOD/001/AliAOD.root");
@@ -140,11 +142,6 @@ else{
     }
 
   }
-
-//  Create the analysis manager
-  // if AOD , AliMCEventHander is not necessary
-  // if (useMC && !iAODAnalysis) {
-
 
   if(useMC){
       AliMCEventHandler* mcHandler = new AliMCEventHandler();
@@ -160,13 +157,13 @@ else{
      mgr->SetInputEventHandler(aodHandler);
    }
 
- if(!iAODAnalysis){
-	 AliAODHandler*aodoutputHandler=new AliAODHandler();
-	 if(!aodoutputHandler) cout<<" NO AliAODHandler" <<endl;
-	 aodoutputHandler->SetOutputFileName("AliAOD.root");
-	 AliAnalysisManager::GetAnalysisManager()->SetOutputEventHandler(aodoutputHandler);
- }
-
+   if(!iAODAnalysis){
+     AliAODHandler*aodoutputHandler=new AliAODHandler();
+     if(!aodoutputHandler) cout<<" NO AliAODHandler" <<endl;
+     aodoutputHandler->SetOutputFileName("AliAOD.root");
+     AliAnalysisManager::GetAnalysisManager()->SetOutputEventHandler(aodoutputHandler);
+   }
+   
  if (!iAODAnalysis) { 
    gROOT->ProcessLine(".L $ALICE_PHYSICS/PWGPP/PilotTrain/AddTaskCDBconnect.C");
    AliTaskCDBconnect* cdb = AddTaskCDBconnect();
@@ -178,39 +175,49 @@ else{
  
   gROOT->ProcessLine(".L $ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/macros/AddTaskMultSelection.C");
   AliMultSelectionTask * taskMult = AddTaskMultSelection(); //
- if(!iAODAnalysis){
-   // RSD filter for TPC tracks and more 
+  // taskMult->SetAlternateOADBforEstimators(gSystem->Getenv("CONFIG_PERIOD"));
+  //  taskMult->SetUseDefaultMCCalib(1);
+  // taskMult->SetAlternateOADBFullManualBypassMC("$ALICE_PHYSICS/OADB/COMMON/MULTIPLICITY/data/OADB-LHC16q-DefaultMC-EPOSLHC.root");
 
-      gROOT->ProcessLine(".L $ALICE_ROOT/ANALYSIS/ESDfilter/macros/AddTaskESDFilter.C");
-	  int run_flag = 1500;
-      AliAnalysisTaskESDfilter *taskesdfilter = 
-		AddTaskESDFilter(true, // Kinemticds tracks for MC 
-						 false,         // write Muon AOD
-						 false,               // write dimuon AOD 
-						 false,               // usePhysicsSelection 
-						 false,               // centrality OBSOLETE
-						 false,                // enable TPS only tracks
-						 false,               // disable cascades
-						 false,               // disable kinks
-						 run_flag,             // run flag (YY00)
-						 3,                    // Muon mode
-						 false,                // V0 filtering off
-						 true,                 // Muon w/SPD tracklets
-						 false,                // Not muon_calo (i.e.,full)
-						 false);               // no add PCM V0s(?)
-	  
-	 gROOT->ProcessLine(".L $ALICE_PHYSICS/PWGLF/FORWARD/analysis2/AddTaskForwardMult.C");
-	 Bool_t   mc  = true; // false: real data, true: simulated data
-	 ULong_t runNo = 195483;
-	 UShort_t sys = 3; // 0: get from data, 1: pp, 2: AA 3: pA
-	 UShort_t sNN = 5023; // 0: get from data, otherwise center of mass energy (per nucleon pair)
-	 Short_t  fld = 5; // 0: get from data, otherwise L3 field in kG
-	 AliAnalysisTask *task  = AddTaskForwardMult(mc, runNo, sys, sNN, fld);
-	 }
-
+  if(!iAODAnalysis){
+    // RSD filter for TPC tracks and ore 
+    /*
+    gROOT->LoadMacro("$ALICE_PHYSICS/PWGGA/GammaConv/macros/AddTask_ConversionAODProduction.C");
+    Int_t dataset=2;
+    AliAnalysisTask *taskconv = AddTask_ConversionAODProduction(dataset, false,  gSystem->Getenv("CONFIG_PERIOD"));
+    mgr->RegisterExtraFile("AliAODGammaConversion.root");
+    */
+   gROOT->ProcessLine(".L $ALICE_ROOT/ANALYSIS/ESDfilter/macros/AddTaskESDFilter.C");
+    int run_flag = 1500;
+    cout<<gROOT->GetGlobalFunction("AddTaskESDFilter")->GetNargs()<<endl;
+    AliAnalysisTaskESDfilter *taskesdfilter =       AddTaskESDFilter//(true);
+      (true,          // Kinemticds tracks for MC 
+       false,         // write Muon AOD
+       false,         // write dimuon AOD 
+       false,         // usePhysicsSelection 
+       false,         // centrality OBSOLETE
+       true,         // enable TPS only tracks
+       false,               // disable cascades
+       false,               // disable kinks
+       run_flag,             // run flag (YY00)
+       3,                    // Muon mode
+       false,                // V0 filtering off
+       true,                 // Muon w/SPD tracklets
+       false,                // Not muon_calo (i.e.,full)
+       false);               // no add PCM V0s(?)
+    
+    
+    gROOT->ProcessLine(".L $ALICE_PHYSICS/PWGLF/FORWARD/analysis2/AddTaskForwardMult.C");
+    Bool_t   mc  = true; // false: real data, true: simulated data
+    ULong_t runNo = 195483;
+    UShort_t sys = 3; // 0: get from data, 1: pp, 2: AA 3: pA
+    UShort_t sNN = 5023; // 0: get from data, otherwise center of mass energy (per nucleon pair)
+    Short_t  fld = 5; // 0: get from data, otherwise L3 field in kG
+    AliAnalysisTask *task  = AddTaskForwardMult(mc, runNo, sys, sNN, fld);
+  }
+  
  gROOT->ProcessLine(".L $ALICE_ROOT/ANALYSIS/macros/AddTaskPIDResponse.C");
-   //   AliAnalysisTaskPIDResponse *taskPID=AddTaskPIDResponse(kFALSE,kFALSE,kTRUE,1);
-   AddTaskPIDResponse(useMC);
+ AddTaskPIDResponse(useMC);
    
    //
    //  //   gROOT->LoadMacro("AddTaskPIDResponse.C");
@@ -226,13 +233,11 @@ else{
    //
    //  AliAnalysisTaskSE *setupTask = AddTaskPIDResponse(isMC,autoMCesd,tuneOnData,recoPass,cachePID,"",useTPCEtaCorrection,useTPCMultiplicityCorrection,recoDataPass);
 
-
+   
    gROOT->ProcessLine(".x AliAnalysisTaskSEpPbCorrelationsForward.cxx++g");
    gROOT->ProcessLine(".x AddTaskpPbCorrelationsForward.C");
    AliAnalysisTaskSEpPbCorrelationsForward* ana =AddTaskpPbCorrelationsForward();
-   
-
-
+  
    // Enable debug printouts
    mgr->SetDebugLevel(0);
    if (!mgr->InitAnalysis()) return;

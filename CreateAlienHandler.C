@@ -1,6 +1,4 @@
-AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
-  {
-
+AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD){
   char *data     = "LHC17f2a_fast";
   char *datatype = "FAST"  ;//Fast,wSDD,woSDD
   Int_t method   =  1;
@@ -11,27 +9,28 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
   // if (!AliAnalysisGrid::CreateToken()) return NULL;
   AliAnalysisAlien *plugin = new AliAnalysisAlien();
   plugin->SetOverwriteMode();
-  plugin->SetMergeViaJDL(1);//
+  plugin->SetMergeViaJDL(1);
   plugin->SetRunMode("full");
-  //   plugin->SetRunMode("terminate");
+  //        plugin->SetRunMode("terminate");
   //  plugin->SetRunMode("test");
-
+  
   //Set versions of used packages
- plugin->SetAPIVersion("V1.1x");
-  //  plugin->SetAliPhysicsVersion("vAN-20170628-1");
+  plugin->SetAPIVersion("V1.1x");
+  //plugin->SetAliPhysicsVersion("vAN-20170628-1");
   //plugin->SetAliPhysicsVersion("vAN-20170722-1");//have issuse to deal with primary particle so it is removed.
   //plugin->SetAliPhysicsVersion("vAN-20170824-1");
-
-
- //plugin->SetAliPhysicsVersion("vAN-20171218-1");
- //lugin->SetAliPhysicsVersion("vAN-20180325-1");
- // plugin->SetAliPhysicsVersion("vAN-20180708-1");
- plugin->SetAliPhysicsVersion("vAN-20180803-1");
-
+  //plugin->SetAliPhysicsVersion("vAN-20171218-1");
+  //plugin->SetAliPhysicsVersion("vAN-20180325-1");
+  //  plugin->SetAliPhysicsVersion("vAN-20180708-1");
+  //plugin->SetAliPhysicsVersion("vAN-20180803-1");
+  //  plugin->SetAliPhysicsVersion("v5-08-13zc-01-cookdedx-1");
+  // plugin->SetAliROOTVersion("v5-34-30-alice7");
+  plugin->SetAliPhysicsVersion("vAN-20180919-1");
+  
   // Declare input data to be processed.
   // Method 1: Create automatically XML collections using alien 'find' command.
   // Define production directory LFN
-
+  
   if(!isMC){
     plugin->SetRunPrefix("000"); // IMPORTANT!
   }
@@ -147,7 +146,7 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
     //   If no path mentioned data is supposed to be in the work directory (see SetGridWorkingDir())
     //   XML collections added via this method can be combined with the first method if
     //   the content is compatible (using or not tags)
-    //    if(data=="LHC16q" && datatype=="wSDD") plugin->AddDataFile("/alice/cern.ch/user/y/ysekiguc/xml/pass1_CENT_wSDD/000265305_000265525.xml");//old good run list
+    //   if(data=="LHC16q" && datatype=="wSDD") plugin->AddDataFile("/alice/cern.ch/user/y/ysekiguc/xml/pass1_CENT_wSDD/000265305_000265525.xml");//old good run list
     if(data=="LHC16q" && datatype=="wSDD") plugin->AddDataFile("/alice/cern.ch/user/y/ysekiguc/xml/pass1_CENT_wSDD/000265309_000265525.xml");//32 runs
     if(data=="LHC16q" && datatype=="woSDD") plugin->AddDataFile("/alice/cern.ch/user/y/ysekiguc/xml/pass1_CENT_woSDD/000265309_000265525.xml");//32 runs
     if(data=="LHC16q" && datatype=="FAST") plugin->AddDataFile("/alice/cern.ch/user/y/ysekiguc/xml/pass1_FAST/000265309_000265525.xml");//32 runs
@@ -158,26 +157,25 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
 }else{
   if(method==1){
     if(data=="LHC17f2b_fast") plugin->SetGridDataDir("/alice/sim/2017/LHC17f2b_fast");
-	else if(data=="LHC17f2a_fast") plugin->SetGridDataDir("/alice/sim/2017/LHC17f2a_fast_fix");
-	//	plugin->SetDataPattern("AOD/*/AliAOD.root");
-	plugin->SetDataPattern("/*/AliESDs.root");
-	  
-	      plugin->AddRunNumber(265309);
+    else if(data=="LHC17f2a_fast") plugin->SetGridDataDir("/alice/sim/2017/LHC17f2a_fast_fix");
+    //	plugin->SetDataPattern("AOD/*/AliAOD.root");
+    plugin->SetDataPattern("/*/AliESDs.root");
+    
+    plugin->AddRunNumber(265309);
+    plugin->AddRunNumber(265332);
+    plugin->AddRunNumber(265334);
+	//      plugin->AddRunNumber(265335); // remove because of no TOF in data taking
+	plugin->AddRunNumber(265336);
+	plugin->AddRunNumber(265338);
 
-	      
-	      plugin->AddRunNumber(265332);
-     
-	  
-		  plugin->AddRunNumber(265334);
-      //      plugin->AddRunNumber(265335); // remove because of no TOF in data taking
-
-      plugin->AddRunNumber(265336);
-      plugin->AddRunNumber(265338);
-      plugin->AddRunNumber(265339);
-      plugin->AddRunNumber(265342);
-      plugin->AddRunNumber(265343);
+    //plugin->AddRunNumber(265339);
+    //plugin->AddRunNumber(265342);
+      
+    //    plugin->AddRunNumber(265343);
+      /*
       plugin->AddRunNumber(265344);
       plugin->AddRunNumber(265377);
+
       plugin->AddRunNumber(265378);
       plugin->AddRunNumber(265381);
       plugin->AddRunNumber(265383);
@@ -199,6 +197,7 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
       plugin->AddRunNumber(265501);
       plugin->AddRunNumber(265521);
       plugin->AddRunNumber(265525);
+      */
 
     }else if(method==2){
 
@@ -236,40 +235,51 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
     }
 }
 
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/23032018");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/26032018_1");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/27032018");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/27032018_FMDTPC");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/27032018_SECA");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/14052018_1");
-  //  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/15052018_1");
-//  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/16052018_2");
-//plugin->SetGridWorkingDir("EPOS_LHC17f2a/05072018");
 
-//  plugin->SetGridWorkingDir("DPMJET_LHC17f2b/09072018");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/09072018");
- 
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/09072018_split");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/09072018_split_prim");
-
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/23072018_itsits");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/23072018_tpctpc");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/25072018_fmdfmdprim");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_02102018_265309_vAN-20180919-1");
+  ///  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_02102018_265332_vAN-20180919-1");
+  //plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_02102018_265334_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_02102018_265336_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_02102018_265338_vAN-20180919-1");
 
 
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/26072018_tpctpcprim");
-  //   plugin->SetGridWorkingDir("EPOS_LHC17f2a/26072018_tpctpcreco");
-  //     plugin->SetGridWorkingDir("EPOS_LHC17f2a/26072018_tpcfmdprim");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/26072018_tpcfmdreco");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMDC_02102018_265309_265336_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMDC_02102018_265338_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMDC_22112018_265339_vAN-20180919-1");
+  // plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMDC_22112018_265342_vAN-20180919-1");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_22112018_265342_vAN-20180919-1");
+  //plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_22112018_265339_vAN-20180919-1");
 
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/30072018_tpctpcprim_modiryptbin");
-  //plugin->SetGridWorkingDir("EPOS_LHC17f2a/30072018_tpctpcreco_modiryptbin");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/30072018_tpcfmdprim_modiryptbin");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/30072018_tpcfmdreco_modiryptbin");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESD/07092018_265309");
-  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/10092018_265309_2");
-  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_10092018");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/ForwardMC/TPCFMD_102018_265309_265336_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/ForwardMC/TPCFMDC_102018_265309_265336_vAN-20180919-1");
 
+    
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265309_vAN-20180919-1");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265332_vAN-20180919-1");
+  //      plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265334_vAN-20180919-1");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265336_vAN-20180919-1");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265338_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265339_vAN-20180919-1");
+  //  plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/NoMultiplicitycut/TPCFMD_17092018_265309_vAN-20180919-1_differentaliphysics");
+
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_05022019_265309_265336_vAN-20180919-1_bootstrap");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMD_05022019_265309_265336_vAN-20180919-1_bootstrap_poolmintrack5000");
+  //        plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/TPCFMDA_05022019_265309_265336_vAN-20180919-1_bootstrap_poolmintrack5000");
+
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDA_01052019_265309_265336");
+  //     plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDA_01052019_265309_265336_v1");
+
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDC_01052019_265338");
+  //     plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDA_01052019_265338");
+
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDA_01052019_265339_265342");
+  //        plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDC_01052019_265339_265342");
+
+  //      plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDA_05052019_265309_265338");
+  //    plugin->SetGridWorkingDir("EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDC_05052019_265309_265338");
+  
+  //  plugin->SetGridWorkingDir("01072019/EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDC_05052019_265309_265338");
+  plugin->SetGridWorkingDir("01072019/EPOS_LHC17f2a/ESDtoAOD/tpctrack/TPCFMDC_02072019_265309_265338");
 
   // Declare alien output directory. Relative to working directory.
   plugin->SetGridOutputDir("output"); // In this case will be $HOME/work/output
@@ -288,7 +298,7 @@ AliAnalysisGrid* CreateAlienHandler(Bool_t isMC,Bool_t fAOD)
    // Declare the output file names separated by blancs.
    // (can be like: file.root or file.root@ALICE::Niham::File)
    plugin->SetDefaultOutputs("");
-
+   plugin->SetMergeExcludes("AliAOD.root,EventStat_temp.root");
    // Optionally define the files to be archived.
    //   plugin->SetOutputArchive("log_archive.zip:stdout,stderr@ALICE::NIHAM::File root_archive.zip:*.root@ALICE::NIHAM::File");
    //   plugin->SetOutputArchive("log_archive.zip:stdout,stderr");

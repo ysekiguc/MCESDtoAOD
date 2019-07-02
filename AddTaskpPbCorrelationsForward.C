@@ -5,7 +5,7 @@ AliAnalysisTaskSEpPbCorrelationsForward* AddTaskpPbCorrelationsForward(
 								       TString  fCollisiontype = "pPb",
 								       Bool_t  fDataType       =kFALSE,//TRUE=real data, FALSE=MC
 								       Bool_t frun2            =kTRUE,
-								       TString anamode         ="TPCFMD",//TPCTPC, TPCV0A, TPCV0C, V0AV0C,TPCFMD, TPCFMDC, FMDFMD
+								       TString anamode         ="TPCFMDC",//TPCTPC, TPCV0A, TPCV0C, V0AV0C,TPCFMD, TPCFMDC, FMDFMD
 								       TString anacent         ="V0A",
 								       TString assomode        ="hadron",
 								       Int_t ffilterbit        =5

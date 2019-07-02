@@ -13,7 +13,7 @@
 #include "TH3.h"
 #include "THnSparse.h"
 #include "TString.h"
-
+#include "AliEventCuts.h"
 class TList;
 class AliCFContainer;
 // class AliTHn;
@@ -91,7 +91,7 @@ private:
   TObjArray *GetAcceptedTracksLeading(AliAODEvent *fevent,Bool_t leading);
   TObjArray *GetAcceptedTracksPID(AliAODEvent *faod);
   TObjArray *GetAcceptedV0Tracks(const AliAODEvent *faod);
-  TObjArray *GetAcceptedCascadeTracks(const AliAODEvent *faod);
+  //  TObjArray *GetAcceptedCascadeTracks(const AliAODEvent *faod);
   TObjArray *GetAcceptedTracksAssociated(AliAODEvent *faod);
 
   TObjArray* GetFMDhitsYS(Bool_t Aside);
@@ -126,6 +126,13 @@ private:
                                    AliTHn *triggerHist, AliTHn *associateHist,
                                    Bool_t, Float_t, Float_t, Float_t, Int_t);
 
+    void FillCorrelationTracksMixingprim(Double_t MultipOrCentMix, Double_t pvxMix,
+                                   Double_t poolmax, Double_t poolmin,
+                                   TObjArray *triggerArray,
+                                   TObjArray *selectedV0Array,
+                                   AliTHn *triggerHist, AliTHn *associateHist,
+                                   Bool_t, Float_t, Float_t, Float_t, Int_t);
+
   inline Float_t GetDPhiStar(Float_t phi1, Float_t pt1, Float_t charge1,
                              Float_t phi2, Float_t pt2, Float_t charge2,
                              Float_t radius, Float_t bSign);
@@ -135,13 +142,13 @@ private:
   Bool_t frun2;
   Bool_t fQA;
   Bool_t fIsAOD;
-  Bool_t fOnfly;
   TString fAnaMode;
   TString fasso;
   Bool_t fPID;
 
   TString fCentType;
 
+  
   Double_t lCentrality;
   Float_t bSign;
   Double_t fZVertex;
@@ -156,52 +163,12 @@ private:
   Int_t ffilterbit;
   Double_t fPtMin;
   Double_t fEtaMax;
-  Double_t fEtaMaxExtra;
-  Double_t fEtaMinExtra;
-  // V0 particles
-  Double_t fEtaMaxV0;
-  Double_t fEtaMinV0;
-  Double_t fdcaDaughtersToPrimVtx;
-  Double_t fdcaBetweenDaughters;
-  Double_t fRadiMin;
-  Double_t fRadiMax;
-  Double_t fcutcTauLam;
-  Double_t fcutcTauK0;
-  Double_t fcosMinK0s;
-  Double_t fcosMinLambda;
-  Double_t fMaxnSigmaTPCV0;
-  // V0 daughter cut
-  TH1D *hv0dcharge;
-  Double_t fclustermin;
-  Double_t fratiocluster;
-  Double_t fEtaMaxDaughter;
-  Double_t fEtaMinDaughter;
-  THnSparseF *fHistMass_K0s;
-  THnSparseF *fHistMass_K0s_MC;
-  THnSparseF *fHistMass_Lambda;
-  THnSparseF *fHistMass_ALambda;
-  THnSparseF *fHistMass_ALambda_MC;
-  THnSparseF *fHistMassXiMinus;
-  THnSparseF *fHistMassXiPlus;
-  THnSparseF *fHistMassOmegaMinus;
-  THnSparseF *fHistMassOmegaPlus;
-  TH2D *fHistMass_bumpcorr;
-  THnSparseF *fHist_V0QA;
-  THnSparseF *fHist_CascadeQA;
-  TH2D *fHist_AP[6];
-  TH2D *fHistPosNsig[6];
-  TH2D *fHistNsig[6];
-  TH2D *fHistNsigcorr[6];
-  TH2D *fHistNegNsig[6];
-  TH2D *fHistPosNsigQA[6];
-  TH3D* fh3NegNsig[3];
-  TH3D* fh3PosNsig[3];
-
-  THnSparseF *fHistMass_Lambda_MC;
-
-  //	Double_t fPtMinDaughter;
+  AliEventCuts fEventCuts;
   Double_t fNEntries;
   AliVEvent* inputEvent;
+
+    //	Double_t fPtMinDaughter;
+  
   AliAODEvent *fEvent; //  AOD Event
   AliESDEvent *fESD; //  AOD Even
 
@@ -210,10 +177,20 @@ private:
   //  AliESDtrackCuts*fTrackCuts;
   //AliAODVertex *lPrimaryBestVtx;
   const AliVVertex *lPrimaryBestVtx;
+  Double_t fPrimaryZVtx;
 
 
   Double_t tPrimaryVtxPosition[3];
-  Double_t fPrimaryZVtx;
+  TH2D *fHist_AP[6];
+  TH2D *fHistPosNsig[6];
+  TH2D *fHistNsig[6];
+  TH2D *fHistNsigcorr[6];
+  TH2D *fHistNegNsig[6];
+  TH2D *fHistPosNsigQA[6];
+  TH3D* fh3NegNsig[3];
+  TH3D* fh3PosNsig[3];
+  Double_t fZvtxBins[100]; // [fNzVtxBinsDim]
+  Double_t fCentBins[100]; // [fNCentBinsDim]
 
   AliAODVZERO *fvzero;
 
@@ -226,9 +203,9 @@ private:
   Int_t fPoolMinNTracks;   // set minimum number of tracks in the pool
   Int_t fMinEventsToMix;   // set the minimum number of events want to mix
   Int_t fNzVtxBins;        // number of z vrtx bins
-  Double_t fZvtxBins[100]; // [fNzVtxBinsDim]
   Int_t fNCentBins;        // number of centrality bins
-  Double_t fCentBins[100]; // [fNCentBinsDim]
+
+  
   // Track cuts
   Double_t fMaxnSigmaTPCTOF;
 
@@ -238,6 +215,7 @@ private:
   TH1F *fHistCentrality_aftercut;
 
   AliTHn *fHistLeadQA;
+  THnSparse* fhistits;
   AliTHn *fHistPIDQA;
 
   TH2F* fhistdphirec[4];
@@ -247,6 +225,7 @@ private:
   TH2F* fhistitsrefdeltaphiaftercut[4];
   TH2F* fhistitsrefdeltaphicorraftercut[4];
   TH2F* fhistitsrefdeltaetaaftercut[4];
+  TH2F* fhistitsdeltarefphideltaphimc[4];
   AliTHn* fhistmcprim;
   AliTHn* fhistmcprimfinal;
   TH2D*fhmcprimvzeta;
@@ -258,6 +237,7 @@ private:
   TH2D*  fh2_FMD_eta_phi_prim;
   TH2D*  fh2_FMD_acceptance;
   TH2D*  fh2_FMD_eta_phi;
+  TH2D*  fhistfmdphiacc;
   AliTHn* fhistfmd;
 
   TH2F*fFMDV0;
@@ -275,18 +255,14 @@ private:
   TH1F *fHist_Stat;
   TH1F *fHist_V0Stat;
 
-  // QA histograms
-  TH2D *fHistPhiDTPCNSig;
-  TH2D *fHistPhiDTOFNSig;
-  TH2D *fHistPhiDTPCTOFNSig;
-  THnSparseF *fHistMass_PhiMeson;
-  THnSparseF *fHistMass_PhiMeson_MIX;
-  THnSparseF *fHist_PhiQA;
-
+  
   AliTHn *fHistTriggerTrack;
+  AliTHn *fHistTriggerTrack1;
   AliTHn *fHistReconstTrack;
+  AliTHn *fHistReconstTrack1;
   AliTHn *fHistTriggerTrackMix;
   AliTHn *fHistReconstTrackMix;
+  AliTHn *fHistReconstTrackMix1;
 
   ClassDef(AliAnalysisTaskSEpPbCorrelationsForward, 2);
 };
